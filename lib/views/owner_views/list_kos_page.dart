@@ -64,7 +64,14 @@ class ListKosPage extends StatelessWidget {
                   }
 
                   if (controller.kosList.isEmpty) {
-                    return Center(child: Text("Belum ada kos 😢"));
+                    return Center(child: Text(
+                      'Belum ada kos yang ditambahkan :(',
+                      style: PoppinsStyle.stylePoppins(
+                        color: fontBlueSky,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ));
                   }
 
                   return ListView.builder(

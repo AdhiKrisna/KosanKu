@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:kosanku/models/kos_image_model.dart';
@@ -46,10 +48,10 @@ class ListKosController extends GetxController {
   }
 
   Future<void> deleteKos(int kosId, User currentUser) async {
-    print('Deleting kos with ID: $kosId');
-    print('Using token: ${currentUser.userToken}');
+    log('Deleting kos with ID: $kosId');
+    log('Using token: ${currentUser.userToken}');
     //user email
-    print('User email: ${currentUser.userEmail}');
+    log('User email: ${currentUser.userEmail}');
 
     try {
       isLoading.value = true;

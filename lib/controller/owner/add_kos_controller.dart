@@ -135,6 +135,8 @@ class AddKosController extends GetxController {
             'Sesi kamu telah habis, silakan login ulang.',
             backgroundColor: Colors.orange,
             colorText: Colors.white,
+            duration: Duration(seconds: 5),
+            icon: Icon(Icons.warning, color: Colors.white),
           );
           Get.offAllNamed(RouteNames.landing);
           return;
@@ -160,10 +162,6 @@ class AddKosController extends GetxController {
           colorText: Colors.white,
           duration: Duration(seconds: 5),
         );
-        // SessionManager.clear(
-        //   oldEmail: currentUser.userEmail ?? '',
-        //   oldPass: currentUser.userPassword ?? '',
-        // );
         Get.offAllNamed(RouteNames.landing);
         return;
       }

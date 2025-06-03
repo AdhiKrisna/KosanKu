@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location/location.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 
 class LocationController extends GetxController {
   final location = Location();
@@ -12,6 +13,16 @@ class LocationController extends GetxController {
   void onInit() {
     super.onInit();
     _initLocation();
+    _initCompass();
+  }
+
+  
+  void _initCompass() {
+    FlutterCompass.events?.listen((event) {
+      if (event.heading != null) {
+        userHeading.value = event.heading!;
+      }
+    });
   }
 
   Future<void> _initLocation() async {
@@ -59,8 +70,8 @@ class LocationController extends GetxController {
     if (data.latitude != null && data.longitude != null) {
       userLocation.value = LatLng(data.latitude!, data.longitude!);
     }
-    if (data.heading != null) {
-      userHeading.value = data.heading!;
-    }
+    // if (data.heading != null) {
+    //   userHeading.value = data.heading!;
+    // }
   }
 }

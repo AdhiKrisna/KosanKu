@@ -6,15 +6,15 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:kosanku/constants/constant_colors.dart';
 import 'package:kosanku/constants/constant_text_styles.dart';
 import 'package:kosanku/controller/location_controller.dart';
-import 'package:kosanku/controller/main_map_controller.dart';
 import 'package:kosanku/controller/owner/add_kos_controller.dart';
+import 'package:kosanku/controller/owner/map_picker_controller.dart';
 import 'package:kosanku/controller/owner/update_kos_controller.dart';
 import 'package:kosanku/models/kos_model.dart';
 import 'package:kosanku/routes/route_names.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 
-class MapPickerPage extends GetView<MainMapController> {
+class MapPickerPage extends GetView<MapPickerController> {
   MapPickerPage({super.key});
   final locationController = Get.find<LocationController>();
 

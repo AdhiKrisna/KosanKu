@@ -64,8 +64,14 @@ class UserService {
       }),
     );
 
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
-    body['statusCode'] = response.statusCode; // Tambahin manual di body
-    return body;
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body) as Map<String, dynamic>;
+      body['statusCode'] = response.statusCode; // Tambahin manual di body
+      return body;
+    } else if (response.statusCode == 403) {
+      throw Exception('Yah, session kamu sudah habis, silakan login ulang yaa');
+    } else {
+      throw Exception('Gagal memperbarui profil: ${response.body}');
+    }
   }
 }

@@ -47,8 +47,10 @@ class ProfileController extends GetxController {
         successMessage.value = 'Profile berhasil diperbarui';
         // final mainController = Get.find<MainScreenController>();
         // print('masuk sini kah?');
-        await SessionManager.clear(oldEmail: emailController.text, oldPass: passwordController.text);
-
+        await SessionManager.clear(
+          oldEmail: emailController.text,
+          oldPass: passwordController.text,
+        );
         Get.snackbar(
           'Sukses',
           successMessage.value,
@@ -56,51 +58,38 @@ class ProfileController extends GetxController {
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
         );
-      } else if (statusCode == 403) {
-        errorMessage.value =
-            response['message'] ?? 'Akses ditolak. Silakan login ulang';
-        Get.offAllNamed(RouteNames.landing);
-        Get.snackbar(
-          'Akses Ditolak',
-          errorMessage.value,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      } else if (statusCode == 400) {
-        errorMessage.value = response['message'] ?? 'Permintaan tidak valid';
-        Get.snackbar(
-          'Gagal',
-          errorMessage.value,
-          backgroundColor: Colors.orange,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      } else if (statusCode == 409) {
-        errorMessage.value = response['message'] ?? 'Data sudah digunakan';
-        Get.snackbar(
-          errorMessage.value,
-          'Email atau nomor telepon sudah terdaftar oleh pengguna lain',
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-        );
-      } else {
-        errorMessage.value = 'Gagal memperbarui profil';
       }
     } catch (e) {
-      errorMessage.value = 'Terjadi kesalahan: $e';
+      if (e.toString().contains('session')) {
+        Get.snackbar(
+          'Access Token Expired $oldEmail',
+          e.toString().replaceFirst('Exception: ', ''),
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          duration: Duration(seconds: 5),
+        );
+        await SessionManager.clear(oldEmail: oldEmail, oldPass: oldPass);
+        Get.offAllNamed(RouteNames.landing);
+        return;
+      }
+      Get.snackbar(
+        'Gagal memperbarui profil',
+        e.toString().replaceFirst('Exception: ', ''),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 5),
+      );
     } finally {
       isLoading.value = false;
     }
   }
 
-  @override
-  void onClose() {
-    nameController.dispose();
-    phoneController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    super.onClose();
-  }
+  // @override
+  // void onClose() {
+  //   nameController.clear();
+  //   phoneController.clear();
+  //   emailController.clear();
+  //   passwordController.clear();
+  //   super.onClose();
+  // }
 }
