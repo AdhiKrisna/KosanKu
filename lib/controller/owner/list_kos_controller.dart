@@ -21,6 +21,7 @@ class ListKosController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
       final data = await KosService.getKosByOwnerId(ownerId);
+      print('Data from getKosByOwnerId: $data');
       final kosModel = KosModel.fromJson(data);
 
       if (kosModel.data != null) {
@@ -41,7 +42,13 @@ class ListKosController extends GetxController {
       }
     } catch (e) {
       errorMessage.value = e.toString();
-      throw Exception('Failed to load kos data: ${errorMessage.value}');
+      Get.snackbar(
+        'Error',
+        errorMessage.value.replaceFirst('Exception: ', ''),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 5),
+      );
     } finally {
       isLoading.value = false;
     }

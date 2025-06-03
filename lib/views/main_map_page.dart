@@ -24,6 +24,12 @@ class MainMapPage extends GetView<MainMapController> {
         backgroundColor: bgBody,
         actions: [
           IconButton(
+            icon: const Icon(Icons.search, color: pink),
+            onPressed: () {
+              _showSearchDialog(context);
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh, color: pink),
             onPressed: () {
               controller.fetchKos();
@@ -74,8 +80,8 @@ class MainMapPage extends GetView<MainMapController> {
           'TES Error: ${controller.errorMessage}';
           final firstKos = controller.kosList.first;
           final defaultCenter = LatLng(
-            double.tryParse(firstKos.kosLatitude ?? '') ?? -7.7829,
-            double.tryParse(firstKos.kosLongitude ?? '') ?? 110.367,
+            double.tryParse(firstKos.kosLatitude ?? '0') ?? 0,
+            double.tryParse(firstKos.kosLongitude ?? '0') ?? 0,
           );
 
           // Buat list of markers
@@ -127,6 +133,7 @@ class MainMapPage extends GetView<MainMapController> {
           }
 
           return FlutterMap(
+            mapController: controller.mapController,
             options: MapOptions(
               initialCenter: defaultCenter,
               initialZoom: 14.0,
@@ -136,8 +143,9 @@ class MainMapPage extends GetView<MainMapController> {
             children: [
               TileLayer(
                 // urlTemplate: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
-                urlTemplate:
-                    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+
+                userAgentPackageName: 'com.example.app',
               ),
               MarkerLayer(markers: markers),
             ],
@@ -264,7 +272,6 @@ class MainMapPage extends GetView<MainMapController> {
                         () => {
                           // print('Navigating to detail page for $kosan'),
                           // print('Navigating to detail page for ${kosan.kosName}'),
-              
                           Get.toNamed(RouteNames.detailKos, arguments: kosan),
                         },
                     child: Text(
@@ -287,5 +294,92 @@ class MainMapPage extends GetView<MainMapController> {
       await controller.fetchKos();
       controller.isLoading.value = false;
     });
+  }
+
+  void _showSearchDialog(BuildContext context) {
+    final TextEditingController searchController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Cari Kos"),
+          content: TextField(
+            controller: searchController,
+            decoration: const InputDecoration(hintText: "Masukkan nama kos"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("Batal"),
+            ),
+            TextButton(
+              onPressed: () {
+                final keyword = searchController.text.trim().toLowerCase();
+
+                // Ambil lokasi user
+                final userLocation = locationController.userLocation.value;
+                final Distance distance = Distance();
+
+                double jarak = distance.as(
+                  LengthUnit.Meter,
+                  LatLng(-7.78165, 110.36498), // titik A
+                  LatLng(-7.78200, 110.36550), // titik B
+                );
+
+                print('Jarak dalam meter: $jarak');
+                // Filter kos yang namanya cocok
+                final matchedKosList =
+                    controller.kosList.where((kos) {
+                      return (kos.kosName ?? '').toLowerCase().contains(
+                        keyword,
+                      );
+                    }).toList();
+
+                if (matchedKosList.isNotEmpty) {
+                  // Urutkan berdasarkan jarak dari user
+                  matchedKosList.sort((a, b) {
+                    final aLat = double.tryParse(a.kosLatitude ?? '') ?? 0;
+                    final aLng = double.tryParse(a.kosLongitude ?? '') ?? 0;
+                    final bLat = double.tryParse(b.kosLatitude ?? '') ?? 0;
+                    final bLng = double.tryParse(b.kosLongitude ?? '') ?? 0;
+
+                    final aDist = distance.as(
+                      LengthUnit.Meter,
+                      LatLng(userLocation.latitude, userLocation.longitude),
+                      LatLng(aLat, aLng),
+                    );
+                    final bDist = distance.as(
+                      LengthUnit.Meter,
+                      LatLng(userLocation.latitude, userLocation.longitude),
+                      LatLng(bLat, bLng),
+                    );
+                    return aDist.compareTo(bDist);
+                  });
+
+                  final nearestKos = matchedKosList.first;
+                  final lat = double.tryParse(nearestKos.kosLatitude ?? '');
+                  final lng = double.tryParse(nearestKos.kosLongitude ?? '');
+
+                  if (lat != null && lng != null) {
+                    controller.mapController.move(LatLng(lat, lng), 16.0);
+                  }
+                } else {
+                  Get.snackbar(
+                    'Tidak ditemukan',
+                    'Kos dengan nama tersebut tidak ditemukan.',
+                    backgroundColor: Colors.orange,
+                    colorText: Colors.white,
+                  );
+                }
+
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cari"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

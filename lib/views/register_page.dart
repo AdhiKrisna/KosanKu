@@ -38,6 +38,11 @@ class RegisterPage extends GetView<RegisterController> {
               controller: controller.emailController,
               label: "Email",
             ),
+            TextFormFieldWidget(
+              controller: controller.phoneController,
+              label: "Nomor Telepon",
+              isNumber: true,
+            ),
             Obx(
               () => TextFormFieldWidget(
                 controller: controller.passwordController,
@@ -72,24 +77,30 @@ class RegisterPage extends GetView<RegisterController> {
             ),
 
             const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: controller.register,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: pink,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return ElevatedButton(
+                onPressed: controller.register,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: pink,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
-                padding: const EdgeInsets.symmetric(vertical: 16),
-              ),
-              child: Text(
-                'Register',
-                style: PoppinsStyle.stylePoppins(
-                  color: bgBlue,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                child: Text(
+                  'Register',
+                  style: PoppinsStyle.stylePoppins(
+                    color: bgBlue,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-            ),
+              );
+            }),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [

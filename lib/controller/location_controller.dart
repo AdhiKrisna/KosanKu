@@ -6,7 +6,7 @@ import 'package:flutter_compass/flutter_compass.dart';
 
 class LocationController extends GetxController {
   final location = Location();
-  final Rx<LatLng> userLocation = const LatLng(0, 0).obs;
+  final Rx<LatLng> userLocation = const LatLng(-7.78294, 110.408).obs;
   final RxDouble userHeading = 0.0.obs;
 
   @override

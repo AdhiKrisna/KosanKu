@@ -1,26 +1,25 @@
 import 'dart:developer';
 
+import 'package:flutter_map/flutter_map.dart';
 import 'package:get/get.dart';
 import 'package:kosanku/models/kos_image_model.dart';
 import 'package:kosanku/models/kos_model.dart';
 import 'package:kosanku/services/kos_image_service.dart';
 import 'package:kosanku/services/kos_service.dart';
-import 'package:latlong2/latlong.dart';
+
 
 class MainMapController extends GetxController {
   final kosList = <Kos>[].obs;
   final isLoading = false.obs;
   final errorMessage = ''.obs;
   final kosImageList = <KosImage>[].obs;
-  late Rx<LatLng> selectedPosition;
+  final mapController = MapController();
+
 
   @override
   void onInit() {
     super.onInit();
     // fallback default kalau nggak ada argumen (dipakai di MainMapPage)
-    selectedPosition = Rx<LatLng>(
-      const LatLng(-7.782279034876108, 110.41620335724352),
-    );
     fetchKos();
   }
 

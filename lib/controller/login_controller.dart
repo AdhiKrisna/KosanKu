@@ -77,6 +77,7 @@ class LoginController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
+          duration: const Duration(seconds: 6),
         );
 
         Get.offAllNamed(RouteNames.mainScreen, arguments: userLogin);

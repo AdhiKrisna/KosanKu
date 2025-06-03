@@ -17,6 +17,7 @@ class RegisterController extends GetxController {
   void togglePasswordVisibility() {
     isPasswordVisible.value = !isPasswordVisible.value;
   }
+
   void toggleConfirmPasswordVisibility() {
     isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
   }
@@ -24,6 +25,7 @@ class RegisterController extends GetxController {
   void goToLoginPage() {
     Get.back(); // kembali ke halaman login
   }
+
   Future<void> register() async {
     isLoading.value = true;
     try {
@@ -33,15 +35,34 @@ class RegisterController extends GetxController {
         email: emailController.text,
         password: passwordController.text,
       );
-
       if (response.status == 'success') {
-        Get.snackbar('Success', response.message ?? 'Registrasi berhasil');
-        Get.back(); // balik ke login
+        Get.snackbar(
+          'Success',
+          'Registrasi Sukses! Selangkah lagi untuk menjadi juragan kos yang sukses!',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 6),
+        );
+        Get.offNamed('/login'); // Navigate to login page
       } else {
-        errorMessage.value = response.message ?? 'Registrasi gagal';
+        Get.snackbar(
+          'Error',
+          response.message ?? 'Registration failed. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
       }
     } catch (e) {
-      errorMessage.value = 'Terjadi kesalahan: $e';
+      Get.snackbar(
+        'Error',
+        //remove the Exception part from the error message
+        e.toString().replaceFirst('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
     } finally {
       isLoading.value = false;
     }
@@ -49,11 +70,11 @@ class RegisterController extends GetxController {
 
   @override
   void onClose() {
-    nameController.dispose();
-    phoneController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
+    nameController.clear();
+    phoneController.clear();
+    emailController.clear();
+    passwordController.clear();
+    confirmPasswordController.clear();
     super.onClose();
   }
 }

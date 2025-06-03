@@ -74,164 +74,169 @@ class ListKosPage extends StatelessWidget {
                     ));
                   }
 
-                  return ListView.builder(
-                    itemCount: controller.kosList.length,
-                    itemBuilder: (context, index) {
-                      final kos = controller.kosList[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Get.toNamed(RouteNames.detailKos, arguments: kos);
-                        },
-                        child: Card(
-                          margin: EdgeInsets.symmetric(vertical: 8.0),
-                          child: Container(
-                            padding: EdgeInsets.all(16.0),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: fontBlue2, width: 3.0),
-                              borderRadius: BorderRadius.circular(8.0),
-                              color: bgBlue,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  kos.kosName ?? 'Nama Kos Tidak Tersedia',
-                                  style: PoppinsStyle.stylePoppins(
-                                    color: pink,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 12),
-                                Container(
-                                  height: 250,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(color: pink, width: 2),
-                                    borderRadius: BorderRadius.circular(15),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        controller
-                                                .kosImageMap[kos.id]
-                                                ?.first
-                                                .imageUrl ??
-                                            'https://via.placeholder.com/150',
-                                      ),
-                                      fit: BoxFit.cover,
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      await controller.getKosByOwnerId(user.userId ?? 0);
+                    },
+                    child: ListView.builder(
+                      itemCount: controller.kosList.length,
+                      itemBuilder: (context, index) {
+                        final kos = controller.kosList[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Get.toNamed(RouteNames.detailKos, arguments: kos);
+                          },
+                          child: Card(
+                            margin: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Container(
+                              padding: EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: fontBlue2, width: 3.0),
+                                borderRadius: BorderRadius.circular(8.0),
+                                color: bgBlue,
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    kos.kosName ?? 'Nama Kos Tidak Tersedia',
+                                    style: PoppinsStyle.stylePoppins(
+                                      color: pink,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                ),
-                                SizedBox(height: 12),
-                                Text(
-                                  'Alamat: ${kos.kosAddress ?? 'Alamat Tidak Tersedia'}',
-                                  style: PoppinsStyle.stylePoppins(
-                                    color: fontBlueSky,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
+                                  SizedBox(height: 12),
+                                  Container(
+                                    height: 250,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: pink, width: 2),
+                                      borderRadius: BorderRadius.circular(15),
+                                      image: DecorationImage(
+                                        image: NetworkImage(
+                                          controller
+                                                  .kosImageMap[kos.id]
+                                                  ?.first
+                                                  .imageUrl ??
+                                              'https://via.placeholder.com/150',
+                                        ),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(height: 12),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width *
-                                          0.35,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: bgBlue,
-                                          side: BorderSide(
-                                            color: fontBlue2,
-                                            width: 2,
+                                  SizedBox(height: 12),
+                                  Text(
+                                    'Alamat: ${kos.kosAddress ?? 'Alamat Tidak Tersedia'}',
+                                    style: PoppinsStyle.stylePoppins(
+                                      color: fontBlueSky,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  SizedBox(height: 12),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                            0.35,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: bgBlue,
+                                            side: BorderSide(
+                                              color: fontBlue2,
+                                              width: 2,
+                                            ),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                8,
+                                              ),
+                                            ),
                                           ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
+                                          onPressed: () {
+                                            Get.toNamed(
+                                              RouteNames.updateKos,
+                                              arguments: {
+                                                'kos': kos,
+                                                'user': user,
+                                              },
+                                            );
+                                          },
+                                          child: Text(
+                                            'Edit Kos',
+                                            style: PoppinsStyle.stylePoppins(
+                                              color: pink,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
                                         ),
-                                        onPressed: () {
-                                          Get.toNamed(
-                                            RouteNames.updateKos,
-                                            arguments: {
-                                              'kos': kos,
-                                              'user': user,
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Edit Kos',
-                                          style: PoppinsStyle.stylePoppins(
-                                            color: pink,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width *
-                                          0.35,
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: pink,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                          ),
-                                        ),
-                                        onPressed: () {
-                                          Get.defaultDialog(
-                                            title: 'Konfirmasi Hapus',
-                                            middleText:
-                                                'Apakah Anda yakin ingin menghapus kos ini?',
-                                            titleStyle:
-                                                PoppinsStyle.stylePoppins(
-                                                  color: bgBody,
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                            middleTextStyle:
-                                                PoppinsStyle.stylePoppins(
-                                                  color: bgBody,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                            0.35,
+                                        child: ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
                                             backgroundColor: pink,
-                                            onConfirm: () async {
-                                              Get.back();
-                                              await controller.deleteKos(
-                                                kos.id ?? 0,
-                                                user,
-                                              );
-                                            },
-                                            onCancel: () {
-                                              Get.back();
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Hapus Kos',
-                                          style: PoppinsStyle.stylePoppins(
-                                            color: bgBlue,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                8,
+                                              ),
+                                            ),
+                                          ),
+                                          onPressed: () {
+                                            Get.defaultDialog(
+                                              title: 'Konfirmasi Hapus',
+                                              middleText:
+                                                  'Apakah Anda yakin ingin menghapus kos ini?',
+                                              titleStyle:
+                                                  PoppinsStyle.stylePoppins(
+                                                    color: bgBody,
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                              middleTextStyle:
+                                                  PoppinsStyle.stylePoppins(
+                                                    color: bgBody,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                              backgroundColor: pink,
+                                              onConfirm: () async {
+                                                Get.back();
+                                                await controller.deleteKos(
+                                                  kos.id ?? 0,
+                                                  user,
+                                                );
+                                              },
+                                              onCancel: () {
+                                                Get.back();
+                                              },
+                                            );
+                                          },
+                                          child: Text(
+                                            'Hapus Kos',
+                                            style: PoppinsStyle.stylePoppins(
+                                              color: bgBlue,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
+                        );
+                      },
+                    ),
                   );
                 }),
               ),

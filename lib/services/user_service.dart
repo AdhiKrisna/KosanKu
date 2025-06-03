@@ -36,7 +36,16 @@ class UserService {
         'user_password': password,
       }),
     );
-    return UserModel.fromJson(jsonDecode(response.body));
+    if (response.statusCode == 201) {
+      return UserModel.fromJson(jsonDecode(response.body));
+    }
+    else if (response.statusCode == 400) {
+      throw Exception('Email sudah terdaftar, silakan gunakan email lain');
+    }
+
+    else{
+      throw Exception('Gagal mendaftar: ${response.body}');
+    }
   }
 
   static Future<dynamic> updateProfile({
