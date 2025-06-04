@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kosanku/models/user_model.dart';
@@ -116,6 +117,7 @@ class AddKosController extends GetxController {
       );
 
       if (response['status'] == 'success') {
+        await showLocalNotification(kosNameController.text.trim());
         Get.offAllNamed(RouteNames.mainScreen, arguments: currentUser);
         Get.snackbar(
           'Berhasil',
@@ -154,7 +156,7 @@ class AddKosController extends GetxController {
       }
     } catch (e) {
       log('Error saat submit kos: $e');
-      if (e.toString().contains('session'))  {
+      if (e.toString().contains('session')) {
         Get.snackbar(
           'Access Token Expired',
           e.toString().replaceFirst('Exception: ', ''),
@@ -175,6 +177,30 @@ class AddKosController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  //notif
+  Future<void> showLocalNotification(String kosName) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+          'kos_channel_id',
+          'Kos Notifications',
+          channelDescription: 'Notifikasi setelah tambah kos',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+        );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+
+    await FlutterLocalNotificationsPlugin().show(
+      0,
+      '🎉 Kos Kamu Berhasil Ditambahkan!',
+      'Kos "$kosName" berhasil kamu kenalkan kepada dunia! Selamat!',
+      platformChannelSpecifics,
+    );
   }
 
   @override

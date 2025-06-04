@@ -94,10 +94,6 @@ class ListKosController extends GetxController {
           backgroundColor: Colors.orange,
           colorText: Colors.white,
         );
-        // SessionManager.clear(
-        //   oldEmail: currentUser.userEmail ?? '',
-        //   oldPass: currentUser.userPassword ?? '',
-        // );
         Get.offAllNamed(RouteNames.landing);
         return;
       }

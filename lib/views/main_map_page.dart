@@ -19,7 +19,7 @@ class MainMapPage extends GetView<MainMapController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
+        centerTitle: false,
         foregroundColor: pink,
         backgroundColor: bgBody,
         actions: [
@@ -36,13 +36,33 @@ class MainMapPage extends GetView<MainMapController> {
             },
           ),
         ],
-        title: Text(
-          'KosanKu',
-          style: PoppinsStyle.stylePoppins(
-            color: pink,
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-          ),
+        title: Column(
+          children: [
+            Text(
+              'KosanKu',
+              style: PoppinsStyle.stylePoppins(
+                color: pink,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Obx(
+              () => Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    controller.currentTime.value,
+                    style: PoppinsStyle.stylePoppins(
+                      color: pink,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
       body: Container(

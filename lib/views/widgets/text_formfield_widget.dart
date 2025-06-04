@@ -16,7 +16,7 @@ class TextFormFieldWidget extends StatelessWidget {
     required this.label,
     this.isNumber = false,
     this.obscureText = false,
-    this.maxLines,
+    this.maxLines = 1,
     this.suffixIcon,
   });
 
@@ -36,7 +36,9 @@ class TextFormFieldWidget extends StatelessWidget {
         const SizedBox(height: 8),
         TextFormField(
           controller: controller,
-          keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+          keyboardType: isNumber ? TextInputType.number : maxLines != 1
+              ? TextInputType.multiline
+              : TextInputType.text,
           obscureText: obscureText,
           maxLines: maxLines ?? 1,
           style: PoppinsStyle.stylePoppins(

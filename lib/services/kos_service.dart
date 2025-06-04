@@ -26,11 +26,7 @@ class KosService {
     final response = await http.get(
       Uri.parse('$_baseApiUrl/kos/owner/$ownerId'),
     );
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Failed to load kos by owner ID');
-    }
+    return jsonDecode(response.body);
   }
 
   /// POST: Buat kos baru (wajib dengan minimal 1 gambar)

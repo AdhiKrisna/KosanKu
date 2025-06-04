@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kosanku/constants/constant_colors.dart';
@@ -195,6 +196,9 @@ class UpdateKosController extends GetxController {
       );
 
       if (kosResponse['status'] == 'success') {
+        //push notifikasi
+        await showLocalNotification(kosNameController.text.trim());
+        
         Get.offAllNamed(RouteNames.mainScreen, arguments: currentUser);
         Get.snackbar(
           'Berhasil',
@@ -467,6 +471,29 @@ class UpdateKosController extends GetxController {
     }
   }
 
+  //notif
+  Future<void> showLocalNotification(String kosName) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+          'kos_channel_id',
+          'Kos Notifications',
+          channelDescription: 'Notifikasi setelah update kos',
+          importance: Importance.max,
+          priority: Priority.high,
+          ticker: 'ticker',
+        );
+
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
+
+    await FlutterLocalNotificationsPlugin().show(
+      0,
+      '🎉 Kos Kamu Berhasil Diedit!',
+      'Kos "$kosName" berhasil kamu perbarui! Selamat!',
+      platformChannelSpecifics,
+    );
+  }
   @override
   void onClose() {
     kosNameController.dispose();

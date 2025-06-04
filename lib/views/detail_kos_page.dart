@@ -176,7 +176,7 @@ class DetailKosPage extends GetView<DetailKosController> {
                   ),
                 ),
                 Text(
-                  kos.kosRules ?? 'Pemilik kos belum mengisi peraturan',
+                  kos.kosAddress ?? 'Pemilik kos belum mengisi peraturan',
                   style: PoppinsStyle.stylePoppins(
                     color: fontBlueSky,
                     fontSize: 16,
@@ -191,13 +191,104 @@ class DetailKosPage extends GetView<DetailKosController> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                Text(
-                  'Range Harga: Rp. ${kos.minPrice ?? '-'} - Rp. ${kos.maxPrice ?? '-'}',
-                  style: PoppinsStyle.stylePoppins(
-                    color: fontBlueSky,
-                    fontSize: 16,
-                  ),
-                ),
+                Obx(() {
+                  final currencyOptions = [
+                    'Rupiah',
+                    'USD',
+                    'EURO',
+                    'Yen',
+                    'Pounds',
+                    'Dolar Australia',
+                  ];
+
+                  final int? min = kos.minPrice;
+                  final int? max = kos.maxPrice;
+
+                  final selectedCurrency =
+                      controller.selectedCurrency.value.isNotEmpty
+                          ? controller.selectedCurrency.value
+                          : 'Rupiah';
+                  final symbol = controller.getSymbol(selectedCurrency);
+
+                  final convertedMin =
+                      min != null
+                          ? controller
+                              .convertCurrency(min, selectedCurrency)
+                              .toStringAsFixed(2)
+                          : '-';
+                  final convertedMax =
+                      max != null
+                          ? controller
+                              .convertCurrency(max, selectedCurrency)
+                              .toStringAsFixed(2)
+                          : '-';
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Range Harga : \n\n$symbol $convertedMin - $symbol $convertedMax',
+                        style: PoppinsStyle.stylePoppins(
+                          color: fontBlueSky,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.5,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: bgBlue,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: pink, width: 1),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButtonFormField<String>(
+                            dropdownColor: bgBlue,
+                            style: PoppinsStyle.stylePoppins(
+                              color: pink,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            hint: Text(
+                              '(Pilih Mata Uang)',
+                              style: PoppinsStyle.stylePoppins(
+                                color: pink,
+                                fontSize: 14,
+                              ),
+                            ),
+                            value: selectedCurrency,
+                            items:
+                                currencyOptions.map((curr) {
+                                  return DropdownMenuItem<String>(
+                                    value: curr,
+                                    child: Text(
+                                      curr,
+                                      style: PoppinsStyle.stylePoppins(
+                                        color: pink,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                            onChanged: (newValue) {
+                              controller.selectedCurrency.value = newValue!;
+                              log(
+                                'Selected currency: ${controller.selectedCurrency.value}',
+                              );
+                            },
+                            decoration: InputDecoration(
+                              hintText: '(Pilih Mata Uang)',
+                              hintStyle: TextStyle(color: pink, fontSize: 14),
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+
                 Wrap(
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
